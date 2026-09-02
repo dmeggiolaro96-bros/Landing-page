@@ -165,15 +165,29 @@ Con `prefers-reduced-motion: reduce`, l'utente vede comunque lo schema tecnico c
 - Un solo file SVG inline (non `<img src="...svg">`): serve poter targettizzare gruppi/path per id da GSAP, cosa impossibile se l'SVG è caricato come immagine esterna.
 - Su mobile, se l'impianto ha molte tubazioni animate, valuta di **ridurre il numero di tubi animati** a quelli principali (mandata + aspirazione) e lasciare statiche le diramazioni secondarie: il beneficio visivo aggiuntivo è marginale rispetto al costo.
 
-## 7. Integrazione in Elementor Pro (tema HELLO)
+## 7. Mettere la demo sul sito web
 
-1. Esporta l'SVG pulito (punto 1) e incollalo inline dentro un widget **HTML** di Elementor, nella sezione dove deve comparire lo schema impianto.
-2. Nello stesso widget HTML, subito dopo l'SVG, incolla in un `<script>`:
-   - il tag CDN GSAP (`https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js`) — se GSAP è già caricato globalmente da Custom Code, salta questo step per evitare doppio caricamento;
-   - il boilerplate anti-flicker (punto 2);
-   - le funzioni di animazione (punti 3 e 4) avvolte nel controllo `prefers-reduced-motion` (punto 5).
-3. Non far girare l'inizializzazione nell'editor di Elementor: aggiungi in cima allo script `if (window.elementorFrontend && elementorFrontend.isEditMode()) return;` per evitare che l'animazione parta anche in modalità modifica.
-4. Verifica che il widget HTML non sia dentro un container con `overflow: hidden` più piccolo del viewBox dell'SVG, altrimenti l'impianto viene tagliato su schermi stretti — imposta `width: 100%; height: auto;` sull'SVG.
+Ci sono due file pronti in `assets/animazioni/`:
+
+- **`demo-impianto-frigorifero.html`** — pagina HTML completa e autonoma (doctype, head, body). Usala se vuoi ospitarla come pagina a sé stante o incorporarla via `<iframe>`.
+- **`demo-impianto-frigorifero-embed.html`** — lo stesso contenuto ma **senza** `<!doctype>`/`<html>`/`<head>`/`<body>`: solo `<link>` font + `<style>` + markup + `<script>`. È il formato giusto da incollare **dentro** una pagina esistente (widget HTML di Elementor, un blocco "Custom HTML", ecc.), perché quei tag non sono ammessi dentro un widget.
+
+**Opzione A — pagina/iframe** (più semplice, isolamento totale dagli stili del sito):
+1. Carica `demo-impianto-frigorifero.html` sul tuo hosting (o come pagina statica).
+2. Incorporalo dove serve con:
+   ```html
+   <iframe src="/percorso/demo-impianto-frigorifero.html" style="width:100%; border:0; aspect-ratio:1040/760;" loading="lazy"></iframe>
+   ```
+   L'`aspect-ratio` evita salti di layout mentre l'iframe carica.
+
+**Opzione B — Elementor Pro (widget HTML), incorporato nella pagina**:
+1. Trascina un widget **HTML** nel punto della pagina dove deve comparire lo schema.
+2. Apri `demo-impianto-frigorifero-embed.html`, copia **tutto** il contenuto e incollalo nel widget.
+3. Se GSAP è già caricato globalmente da Custom Code del tema, rimuovi il tag `<script src=".../gsap.min.js">` duplicato dal frammento incollato (altrimenti nessun danno, viene solo caricato due volte).
+4. Aggiungi in cima allo script `if (window.elementorFrontend && elementorFrontend.isEditMode()) return;` per non far partire l'animazione dentro l'editor di Elementor.
+5. Il markup usa `width:100%; height:auto` sull'SVG e non ha overflow nascosti: si adatta alla larghezza del contenitore automaticamente, niente da configurare oltre alla larghezza della sezione/colonna che lo ospita.
+
+In entrambi i casi la pagina è già autosufficiente (font da Google Fonts, GSAP da cdnjs, immagine di sfondo incorporata in base64): non servono altri asset da caricare.
 
 ## 8. Checklist di collaudo
 
@@ -194,3 +208,4 @@ Con `prefers-reduced-motion: reduce`, l'utente vede comunque lo schema tecnico c
 - **Serpentine (coil) di evaporatore e condensatore**: inizialmente erano lasciate statiche (solo i tratti di collegamento esterni erano animati), col risultato di un flusso che si "blocca" a metà percorso. Sono state estratte anch'esse dal PDF (stessa tecnica di scansione colore, applicata alle singole righe/colonne della serpentina) e animate con lo stesso tratteggio in movimento, così il flusso è continuo dall'inizio alla fine del circuito, senza tratti congelati. Attenzione allo spessore dell'overlay: se più sottile dell'originale lascia un bordo "seghettato" visibile (l'originale spunta ai lati), se troppo spesso le righe ravvicinate della serpentina si fondono in un blocco unico perdendo l'effetto "a serpentina" — va tarato per coprire esattamente lo spessore originale.
 - **Cartiglio**: rimosso interamente (nome progettista, data, scala, formato, logo aziendale e titolo dello schema) con un rettangolo bianco disegnato sull'immagine di sfondo, dimensionato per coprire l'intero blocco senza toccare la cornice del disegno tecnico che lo circonda.
 - **Ordine di sovrapposizione (z-index)**: le eliche vanno disegnate **dopo** (quindi sopra, in primo piano) i tratti di tubazione/serpentina — non prima. Con l'ordine sbagliato il tratteggio animato passa sopra le pale creando un effetto confuso di linee che si incrociano. La maschera bianca della ventola deve inoltre coprire l'intero guscio esterno (non solo l'area delle pale): così la serpentina si "infila" pulita dietro un disco bianco pieno, esattamente come nel disegno originale, e anello + pale ridisegnati sopra restano nitidi senza interferenze dal tratteggio sottostante.
+- **Cornice del foglio tecnico**: il rettangolo che racchiude tutto il disegno (bordo del foglio A3) è stato rimosso dallo sfondo — per uso su una pagina web non serve, e dopo aver ripulito il cartiglio nell'angolo restava comunque un pezzo di bordo "monco" a metà, visivamente rotto. Rimosso su tutti e 4 i lati (stessa tecnica: rettangoli bianchi sull'immagine di sfondo, coordinate lette dal PDF), il disegno ora è a bordo pieno, senza cornice.
