@@ -5,61 +5,63 @@
 <title>Impianto Frigorifero Animato</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-  :root {
+  .fluicom-anim {
     --bg: #f4f6f9; --panel: #ffffff; --panel-border: #d7dee6;
     --ink: #1c2a3a; --ink-dim: #5c6b7c; --accent: #0e7c86;
     --pipe-alta: #e0261c; --pipe-bassa: #f2a51e;
   }
   @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
+    .fluicom-anim:not([data-theme="light"]) {
       --bg: #0b1420; --panel: #111d2b; --panel-border: #24384c;
       --ink: #e7edf5; --ink-dim: #93a4b8; --accent: #3ad1c4;
     }
   }
-  :root[data-theme="dark"] {
+  .fluicom-anim[data-theme="dark"] {
     --bg: #0b1420; --panel: #111d2b; --panel-border: #24384c;
     --ink: #e7edf5; --ink-dim: #93a4b8; --accent: #3ad1c4;
   }
-  html.gsap-anim [data-gsap] { opacity: 0; }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0; background: var(--bg); color: var(--ink);
+  .fluicom-anim.gsap-anim [data-gsap] { opacity: 0; }
+  .fluicom-anim, .fluicom-anim * { box-sizing: border-box; }
+  .fluicom-anim {
+    background: var(--bg); color: var(--ink);
     font-family: 'Space Grotesk', system-ui, sans-serif;
     display: flex; flex-direction: column; align-items: center; gap: 16px;
     padding: 28px 20px 40px;
   }
-  header { text-align: center; max-width: 680px; }
-  .eyebrow {
+  .fluicom-anim header { text-align: center; max-width: 680px; }
+  .fluicom-anim .eyebrow {
     font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .14em;
     text-transform: uppercase; color: var(--accent); margin: 0 0 8px;
   }
-  h1 { font-size: 21px; font-weight: 600; margin: 0 0 6px; text-wrap: balance; }
-  .sub { font-size: 13px; color: var(--ink-dim); margin: 0; line-height: 1.5; }
-  .legend {
+  .fluicom-anim h1 { font-size: 21px; font-weight: 600; margin: 0 0 6px; text-wrap: balance; }
+  .fluicom-anim .sub { font-size: 13px; color: var(--ink-dim); margin: 0; line-height: 1.5; }
+  .fluicom-anim .legend {
     display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;
     font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-dim);
     background: var(--panel); border: 1px solid var(--panel-border);
     border-radius: 10px; padding: 10px 16px;
   }
-  .legend span { display: inline-flex; align-items: center; gap: 7px; }
-  .swatch { width: 20px; height: 4px; border-radius: 2px; display: inline-block; }
-  .plant-wrap {
+  .fluicom-anim .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .fluicom-anim .swatch { width: 20px; height: 4px; border-radius: 2px; display: inline-block; }
+  .fluicom-anim .plant-wrap {
     width: 100%; max-width: 1040px; background: var(--panel);
     border: 1px solid var(--panel-border); border-radius: 14px; padding: 10px;
   }
-  svg { width: 100%; height: auto; display: block; }
-  .pipe { fill: none; stroke-linecap: round; stroke-linejoin: round; }
-  .pipe-alta { stroke: var(--pipe-alta); }
-  .pipe-bassa { stroke: var(--pipe-bassa); }
-  .mask-line { fill: none; stroke: #ffffff; stroke-linecap: round; }
-  .fan-ring { fill: none; stroke: #1a1a1a; stroke-width: 1; }
-  .fan-blade { fill: none; stroke: #1a1a1a; stroke-width: 1; }
-  .fan-hub { fill: #ffffff; stroke: #1a1a1a; stroke-width: 1; }
-  .reduced-note { display: none; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: var(--ink-dim); }
-  @media (prefers-reduced-motion: reduce) { .reduced-note { display: block; } }
+  .fluicom-anim svg { width: 100%; height: auto; display: block; }
+  .fluicom-anim .pipe { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .fluicom-anim .pipe-alta { stroke: var(--pipe-alta); }
+  .fluicom-anim .pipe-bassa { stroke: var(--pipe-bassa); }
+  .fluicom-anim .mask-line { fill: none; stroke: #ffffff; stroke-linecap: round; }
+  .fluicom-anim .fan-ring { fill: none; stroke: #1a1a1a; stroke-width: 1; }
+  .fluicom-anim .fan-blade { fill: none; stroke: #1a1a1a; stroke-width: 1; }
+  .fluicom-anim .fan-hub { fill: #ffffff; stroke: #1a1a1a; stroke-width: 1; }
+  .fluicom-anim .reduced-note { display: none; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: var(--ink-dim); }
+  @media (prefers-reduced-motion: reduce) { .fluicom-anim .reduced-note { display: block; } }
 </style>
 </head>
 <body>
+
+<div class="fluicom-anim" id="fluicom-anim">
 
 <header data-gsap>
   <p class="eyebrow">Fluicom &middot; R452A &middot; cella -25&deg;C</p>
@@ -87,10 +89,14 @@
   </svg>
 </div>
 
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
 <script>
 (function () {
-  document.documentElement.classList.add('gsap-anim');
+  var root = document.getElementById('fluicom-anim');
+  if (!root) return;
+  root.classList.add('gsap-anim');
 
   function initAnimations() {
     var mm = gsap.matchMedia();
@@ -98,15 +104,15 @@
       { reduced: '(prefers-reduced-motion: reduce)', full: '(prefers-reduced-motion: no-preference)' },
       function (ctx) {
         if (ctx.conditions.full) {
-          gsap.to('#fan-evap', { rotation: 360, transformOrigin: '50% 50%', duration: 3, ease: 'linear', repeat: -1 });
-          gsap.to('#fan-cond', { rotation: -360, transformOrigin: '50% 50%', duration: 2.4, ease: 'linear', repeat: -1 });
+          gsap.to(root.querySelector('#fan-evap'), { rotation: 360, transformOrigin: '50% 50%', duration: 3, ease: 'linear', repeat: -1 });
+          gsap.to(root.querySelector('#fan-cond'), { rotation: -360, transformOrigin: '50% 50%', duration: 2.4, ease: 'linear', repeat: -1 });
 
           var redIds = ['p-red-r1', 'p-red-r2', 'p-red-r3', 'p-red-r4', 'p-red-r5', 'p-red-r6', 'p-red-r7', 'p-red-r8', 'p-red-r9', 'p-red-r10', 'p-red-cr0', 'p-red-cr1', 'p-red-cr2', 'p-red-cr3', 'p-red-cr4', 'p-red-cr5', 'p-red-cr6', 'p-red-cr7', 'p-red-cr8', 'p-red-cr9', 'p-red-cr10', 'p-red-cr11', 'p-red-cr12', 'p-red-cr13', 'p-red-cr14', 'p-red-cr15', 'p-red-cr16', 'p-red-cr17', 'p-red-cc0', 'p-red-cc1', 'p-red-cc2', 'p-red-cc3', 'p-red-cc4', 'p-red-cc5', 'p-red-cc6', 'p-red-cc7', 'p-red-cc8', 'p-red-cc9', 'p-red-cc10', 'p-red-cc11', 'p-red-cc12', 'p-red-cc13', 'p-red-cc14', 'p-red-cc15', 'p-red-cc16', 'p-red-cc17', 'p-red-cc18', 'p-red-cc19', 'p-red-cc20'];
           var orangeIds = ['p-orange-o1', 'p-orange-o2', 'p-orange-o3', 'p-orange-o4', 'p-orange-co0', 'p-orange-co1', 'p-orange-co2', 'p-orange-co3', 'p-orange-co4', 'p-orange-co5', 'p-orange-co6', 'p-orange-co7', 'p-orange-co8', 'p-orange-co9', 'p-orange-co10', 'p-orange-co11', 'p-orange-co12', 'p-orange-co13', 'p-orange-co14', 'p-orange-co15', 'p-orange-co16', 'p-orange-co17', 'p-orange-co18', 'p-orange-co19', 'p-orange-co20', 'p-orange-co21', 'p-orange-co22', 'p-orange-co23', 'p-orange-co24', 'p-orange-co25', 'p-orange-co26', 'p-orange-co27', 'p-orange-co28', 'p-orange-co29'];
           redIds.forEach(function (id) { setupFlow('#'+id, 9, 7, 0.9); });
           orangeIds.forEach(function (id) { setupFlow('#'+id, 11, 8, 1.1); });
         } else {
-          document.querySelectorAll('.pipe').forEach(function (el) {
+          root.querySelectorAll('.pipe').forEach(function (el) {
             el.style.strokeDasharray = '9 7';
           });
         }
@@ -114,13 +120,13 @@
     );
 
     function setupFlow(selector, dashLen, gap, speed) {
-      var el = document.querySelector(selector);
+      var el = root.querySelector(selector);
       if (!el) return;
       el.style.strokeDasharray = dashLen + ' ' + gap;
       gsap.to(el, { strokeDashoffset: -(dashLen + gap), duration: speed, ease: 'none', repeat: -1 });
     }
 
-    gsap.utils.toArray('[data-gsap]').forEach(function (el) { gsap.set(el, { autoAlpha: 1 }); });
+    gsap.utils.toArray(root.querySelectorAll('[data-gsap]')).forEach(function (el) { gsap.set(el, { autoAlpha: 1 }); });
   }
 
   if (document.readyState === 'loading') {
