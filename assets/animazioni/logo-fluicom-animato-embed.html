@@ -6,7 +6,7 @@
 
 <div class="fluicom-logo-anim" id="fluicom-logo-anim">
   <svg id="logo" viewBox="0 0 951 323" xmlns="http://www.w3.org/2000/svg">
-    <circle id="lg-blue" cx="171" cy="157" r="77" fill="#87bfe0"/>
+    <circle id="lg-blue" cx="112" cy="153" r="56" fill="#87bfe0"/>
     <g id="lg-strokes" transform="translate(-21.5,307.005567) scale(0.1,-0.1)" fill="#03665a" fill-opacity="0" stroke="#03665a" stroke-width="45" stroke-linejoin="round" stroke-linecap="round"><path id="lg-p0" d="M735 3061 c-6 -4 -32 -14 -60 -20 -49 -12 -135 -48 -145 -61 -3 -4
 -16 -13 -30 -20 -14 -7 -32 -19 -40 -26 -46 -42 -87 -85 -105 -110 -11 -15
 -30 -41 -42 -57 -13 -17 -23 -36 -23 -42 0 -6 -5 -16 -11 -22 -6 -6 -23 -44
@@ -74,7 +74,6 @@ l-25 36 0 -567z"/><path id="lg-p6" d="M6335 2194 c-11 -3 -34 -12 -52 -20 -17 -8 
 -155 0 0 -250 c0 -340 -15 -394 -124 -448 -87 -44 -186 -22 -234 51 l-27 40
 -3 304 -3 303 -155 0 -154 0 0 -352z"/><path id="lg-p9" d="M4637 2153 c-4 -3 -7 -224 -7 -490 l0 -483 160 0 160 0 0 490 0 490
 -153 0 c-85 0 -157 -3 -160 -7z"/></g>
-    <text id="lg-reg" x="900" y="72" font-family="sans-serif" font-weight="600" font-size="32" fill="#03665a">&reg;</text>
   </svg>
 </div>
 
@@ -89,7 +88,6 @@ l-25 36 0 -567z"/><path id="lg-p6" d="M6335 2194 c-11 -3 -34 -12 -52 -20 -17 -8 
     var strokes = root.querySelector('#lg-strokes');
     var paths = ['lg-p0', 'lg-p1', 'lg-p2', 'lg-p3', 'lg-p4', 'lg-p5', 'lg-p6', 'lg-p7', 'lg-p8', 'lg-p9'].map(function (id) { return root.querySelector('#' + id); });
     var blue = root.querySelector('#lg-blue');
-    var reg = root.querySelector('#lg-reg');
     var svg = root.querySelector('svg');
 
     function prep() {
@@ -99,8 +97,7 @@ l-25 36 0 -567z"/><path id="lg-p6" d="M6335 2194 c-11 -3 -34 -12 -52 -20 -17 -8 
         el.style.strokeDashoffset = len;
       });
       gsap.set(strokes, { fillOpacity: 0 });
-      gsap.set(blue, { scale: 0, transformOrigin: '171px 157px' });
-      gsap.set(reg, { autoAlpha: 0, scale: 0, transformOrigin: '900px 60px' });
+      gsap.set(blue, { scale: 0, transformOrigin: '112px 153px' });
     }
 
     function play() {
@@ -108,8 +105,7 @@ l-25 36 0 -567z"/><path id="lg-p6" d="M6335 2194 c-11 -3 -34 -12 -52 -20 -17 -8 
       var tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
       tl.to(blue, { scale: 1, duration: 0.5, ease: 'back.out(2.2)' }, 0.1)
         .to(paths, { strokeDashoffset: 0, duration: 1.3, ease: 'power1.inOut', stagger: 0.09 }, 0)
-        .to(strokes, { fillOpacity: 1, duration: 0.5, ease: 'power2.out' }, 1.1)
-        .to(reg, { autoAlpha: 1, scale: 1, duration: 0.3, ease: 'back.out(3)' }, 1.5);
+        .to(strokes, { fillOpacity: 1, duration: 0.5, ease: 'power2.out' }, 1.1);
     }
 
     var mm = gsap.matchMedia();
@@ -122,7 +118,6 @@ l-25 36 0 -567z"/><path id="lg-p6" d="M6335 2194 c-11 -3 -34 -12 -52 -20 -17 -8 
           gsap.set(paths, { strokeDashoffset: 0 });
           gsap.set(strokes, { fillOpacity: 1 });
           gsap.set(blue, { scale: 1 });
-          gsap.set(reg, { autoAlpha: 1, scale: 1 });
         }
       }
     );
