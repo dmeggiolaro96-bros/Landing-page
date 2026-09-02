@@ -23,29 +23,10 @@
   .fluicom-anim.gsap-anim [data-gsap] { opacity: 0; }
   .fluicom-anim, .fluicom-anim * { box-sizing: border-box; }
   .fluicom-anim {
-    background: var(--bg); color: var(--ink);
-    font-family: 'Space Grotesk', system-ui, sans-serif;
-    display: flex; flex-direction: column; align-items: center; gap: 16px;
-    padding: 28px 20px 40px;
+    display: block;
   }
-  .fluicom-anim header { text-align: center; max-width: 680px; }
-  .fluicom-anim .eyebrow {
-    font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .14em;
-    text-transform: uppercase; color: var(--accent); margin: 0 0 8px;
-  }
-  .fluicom-anim h1 { font-size: 21px; font-weight: 600; margin: 0 0 6px; text-wrap: balance; }
-  .fluicom-anim .sub { font-size: 13px; color: var(--ink-dim); margin: 0; line-height: 1.5; }
-  .fluicom-anim .legend {
-    display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;
-    font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-dim);
-    background: var(--panel); border: 1px solid var(--panel-border);
-    border-radius: 10px; padding: 10px 16px;
-  }
-  .fluicom-anim .legend span { display: inline-flex; align-items: center; gap: 7px; }
-  .fluicom-anim .swatch { width: 20px; height: 4px; border-radius: 2px; display: inline-block; }
   .fluicom-anim .plant-wrap {
-    width: 100%; max-width: 1040px; background: var(--panel);
-    border: 1px solid var(--panel-border); border-radius: 14px; padding: 10px;
+    width: 100%; max-width: 1040px;
   }
   .fluicom-anim svg { width: 100%; height: auto; display: block; }
   .fluicom-anim .pipe { fill: none; stroke-linecap: round; stroke-linejoin: round; }
@@ -55,25 +36,11 @@
   .fluicom-anim .fan-ring { fill: none; stroke: #1a1a1a; stroke-width: 1; }
   .fluicom-anim .fan-blade { fill: none; stroke: #1a1a1a; stroke-width: 1; }
   .fluicom-anim .fan-hub { fill: #ffffff; stroke: #1a1a1a; stroke-width: 1; }
-  .fluicom-anim .reduced-note { display: none; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: var(--ink-dim); }
-  @media (prefers-reduced-motion: reduce) { .fluicom-anim .reduced-note { display: block; } }
 </style>
 </head>
 <body>
 
 <div class="fluicom-anim" id="fluicom-anim">
-
-<header data-gsap>
-  <p class="eyebrow">Fluicom &middot; R452A &middot; cella -25&deg;C</p>
-  <h1>Disegno originale animato: eliche e flusso gas</h1>
-  <p class="sub">Sfondo = disegno tecnico originale (PDF vettoriale, non ridisegnato). Le due eliche ruotano; l'intero circuito Ø28 (rosso) e Ø54 (arancio) &mdash; comprese le serpentine di evaporatore e condensatore &mdash; mostra il gas che scorre come tratteggio in movimento continuo.</p>
-</header>
-
-<div class="legend" data-gsap>
-  <span><i class="swatch" style="background:var(--pipe-alta)"></i> Ø28 alta pressione (mandata / liquido)</span>
-  <span><i class="swatch" style="background:var(--pipe-bassa)"></i> Ø54 bassa pressione (aspirazione gas)</span>
-</div>
-<p class="reduced-note">Movimento ridotto rilevato: eliche ferme, flusso mostrato come tratteggio statico.</p>
 
 <div class="plant-wrap" data-gsap>
   <svg viewBox="0 0 792 612" xmlns="http://www.w3.org/2000/svg">
