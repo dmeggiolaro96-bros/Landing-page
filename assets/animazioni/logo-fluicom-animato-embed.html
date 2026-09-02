@@ -109,15 +109,15 @@ l-25 36 0 -567z"/><path id="lg-p6" d="M6335 2194 c-11 -3 -34 -12 -52 -20 -17 -8 
         el.style.strokeDashoffset = len;
       });
       gsap.set(strokes, { fillOpacity: 0 });
-      gsap.set(blue, { scale: 0, transformOrigin: '108px 157px' });
+      gsap.set(blue, { autoAlpha: 0 });
     }
 
     function play() {
       prep();
       var tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
-      tl.to(blue, { scale: 1, duration: 0.5, ease: 'back.out(2.2)' }, 0.1)
-        .to(paths, { strokeDashoffset: 0, duration: 1.3, ease: 'power1.inOut', stagger: 0.09 }, 0)
-        .to(strokes, { fillOpacity: 1, duration: 0.5, ease: 'power2.out' }, 1.1);
+      tl.to(paths, { strokeDashoffset: 0, duration: 1.3, ease: 'power1.inOut', stagger: 0.09 }, 0)
+        .to(strokes, { fillOpacity: 1, duration: 0.5, ease: 'power2.out' }, 1.1)
+        .to(blue, { autoAlpha: 1, duration: 0.5, ease: 'power2.out' }, 1.1);
     }
 
     var mm = gsap.matchMedia();
@@ -129,7 +129,7 @@ l-25 36 0 -567z"/><path id="lg-p6" d="M6335 2194 c-11 -3 -34 -12 -52 -20 -17 -8 
         } else {
           gsap.set(paths, { strokeDashoffset: 0 });
           gsap.set(strokes, { fillOpacity: 1 });
-          gsap.set(blue, { scale: 1 });
+          gsap.set(blue, { autoAlpha: 1 });
         }
       }
     );
