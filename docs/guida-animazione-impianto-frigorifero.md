@@ -3,6 +3,8 @@
 Sorgente: `Disegno impianto di refrigerazione per cella frigorifera alimentare -25°C in gas R452A` (Fluicom).
 Demo funzionante: `assets/animazioni/demo-impianto-frigorifero.html`
 
+**Importante — fedeltà al disegno originale.** La demo NON è una reinterpretazione grafica: lo sfondo è il PDF originale renderizzato 1:1 (stesso layout, stessi colori, stesso testo, stesse proporzioni — nulla è stato ridisegnato in uno stile diverso). Sopra a quello sfondo, immutato, vengono sovrapposti **solo** gli elementi che devono muoversi: le 5 pale di ciascuna elica (in un gruppo ruotabile) e i tratti di tubazione Ø28/Ø54 (ridisegnati esattamente sopra il tracciato reale, con un mascheramento bianco che copre la linea statica originale). Questo è il metodo corretto quando l'obiettivo è animare un disegno tecnico esistente senza alterarne l'aspetto: non si ricostruisce lo schema da zero con uno stile proprio, si anima *sopra* l'originale.
+
 ## 0. Cosa c'è nel disegno (analisi preliminare)
 
 Prima di animare qualunque cosa, ho letto lo schema per capire cosa deve muoversi e cosa no:
@@ -18,32 +20,51 @@ Prima di animare qualunque cosa, ho letto lo schema per capire cosa deve muovers
 
 Questa distinzione (fluido in movimento vs. segnale statico) è il primo errore da evitare: animare anche le linee ciano renderebbe lo schema illeggibile e tecnicamente scorretto.
 
-## 1. Preparare il file sorgente (da PDF a SVG)
+## 1. Preparare il "palco": sfondo originale + overlay animato
 
-Il PDF è vettoriale ma "piatto": tutte le forme sono sciolte, senza gruppi logici. Va ristrutturato prima di poter essere animato.
+Ci sono due strade per animare un PDF tecnico esistente. La demo usa la **strada B**, che è quella corretta quando non si può/deve alterare il disegno:
 
-1. **Apri il PDF in Illustrator / Inkscape** (Inkscape è gratuito e sufficiente).
-2. **Isola le due eliche** in due gruppi separati con id chiari:
-   - `id="fan-evaporatore"` → le 5 pale + eventuale mozzo, RAGGRUPPATE insieme (non il cerchio/guscio esterno, quello resta fermo).
-   - `id="fan-condensatore"` → stesso principio.
-3. **Imposta il centro di rotazione**: seleziona il gruppo pale, verifica che il **bounding box sia centrato sul mozzo** della ventola (il puntino centrale nel disegno). Se le pale non sono simmetriche rispetto al centro, la rotazione "balla" — allinea manualmente i nodi o ricentra l'artboard del gruppo.
-4. **Separa le tubazioni per colore/funzione** in path indipendenti (non un unico tracciato con tutto l'impianto):
-   - `id="tubo-mandata"` per il rosso Ø28
-   - `id="tubo-aspirazione"` per l'arancione Ø54
-   - lascia le linee ciano come sono (statiche)
-   - Ogni tubo deve essere un **singolo `<path>` continuo** nella direzione del flusso reale (dall'inizio alla fine del percorso), perché la direzione del tratteggio animato dipende dal verso in cui il path è disegnato.
-5. **Esporta come SVG** (File → Esporta → SVG ottimizzato in Illustrator, oppure Salva come SVG plain in Inkscape). Pulisci l'SVG risultante con [SVGOMG](https://jakearchibald.github.io/svgomg/) per togliere metadati e ridurre il peso, **facendo attenzione a non far "flattenare" i gruppi** che hai appena creato (disattiva l'opzione "Collapse groups").
+- **Strada A — vettorializzazione completa**: si apre il PDF in Illustrator/Inkscape, si isolano TUTTI gli elementi in gruppi puliti, si esporta un SVG interamente ridisegnato. Rischio: è facilissimo, ricostruendo a mano, introdurre differenze (proporzioni, spessori, posizioni) rispetto all'originale — è quello che è successo nel primo tentativo di questa guida, ed è stato corretto.
+- **Strada B — overlay su sfondo originale** *(usata qui)*: il PDF originale viene renderizzato com'è (nessuna ricostruzione) e usato come immagine di sfondo alla risoluzione/scala esatta del documento. Sopra, si disegnano **solo** i pochi elementi che devono muoversi — pale e tubi — posizionati con le coordinate reali del PDF, mascherando con un patch bianco la linea/pala statica sottostante. Il resto del disegno (testi, valvole, serbatoi, quotatura) non viene mai toccato: è l'immagine originale, quindi è impossibile che "sia diverso".
 
-Risultato atteso: un unico file SVG con struttura tipo:
+Passaggi concreti (Strada B):
+
+1. **Estrai lo sfondo** renderizzando la pagina PDF a una risoluzione fissa e usando le **stesse unità del PDF come `viewBox`** dell'SVG (es. `viewBox="0 0 792 612"` se il PDF è 792×612pt) — così ogni coordinata che leggi dal PDF si traduce 1:1 in coordinate SVG, senza conversioni di scala da tenere a mente.
+   ```python
+   import fitz  # PyMuPDF
+   doc = fitz.open("impianto.pdf")
+   page = doc[0]
+   pix = page.get_pixmap(matrix=fitz.Matrix(2.5, 2.5))  # 2.5x per nitidezza
+   pix.save("sfondo.png")
+   print(page.rect)  # dimensioni in unità PDF = dimensioni del viewBox
+   ```
+2. **Trova le coordinate reali** degli elementi da animare, invece di ridisegnarli a occhio. Per le tubazioni, il modo più affidabile è cercare i pixel del colore esatto della linea (rosso/arancio) nell'immagine e ricostruire i segmenti orizzontali/verticali (l'impianto qui è tutto ortogonale, quindi bastano run-length scan riga per riga e colonna per colonna):
+   ```python
+   # scansiona l'immagine, classifica ogni pixel come 'red'/'orange'/None,
+   # poi raggruppa i pixel colorati contigui in segmenti H (stessa riga) e V (stessa colonna)
+   # → ogni segmento trovato è un tratto di tubo con coordinate reali in unità PDF
+   ```
+   Per i centri delle eliche, ritaglia (`page.get_pixmap(clip=...)`) l'area della ventola e leggi a occhio il centro del mozzo e il raggio del cerchio/guscio esterno sull'immagine ritagliata ingrandita.
+3. **Disegna solo l'overlay animato** con quelle coordinate:
+   - un `<circle>` bianco (raggio = raggio pala + qualche unità) per mascherare le pale originali, poi ring + mozzo + 5 pale ridisegnate dentro `<g id="fan-evaporatore" style="transform-origin: CXpx CYpx;">` (stesso principio per il condensatore);
+   - per ogni tratto di tubo: un `<path class="mask-line">` bianco leggermente più spesso della linea originale (copre anche le frecce di direzione già presenti), seguito da un `<path id="tubo-...">` colorato con le stesse coordinate, pronto per l'animazione del tratteggio.
+4. **Verifica per sovrapposizione**: fai uno screenshot statico (o apri il file) e confronta a occhio l'overlay con lo sfondo — le linee mascherate/ridisegnate devono coincidere esattamente con quelle originali, senza doppie linee visibili né aree bianche "sbagliate".
+
+Risultato atteso — un unico SVG dove lo sfondo è l'immagine originale e sopra ci sono solo gli elementi animati:
 
 ```html
-<svg viewBox="0 0 1200 900">
-  <g id="fan-evaporatore" style="transform-origin: 270px 240px;"> ... 5 pale ... </g>
-  <g id="fan-condensatore" style="transform-origin: 950px 235px;"> ... 5 pale ... </g>
-  <path id="tubo-mandata" d="M ..." />
-  <path id="tubo-aspirazione" d="M ..." />
-  <path class="segnale" d="M ..." />
-  <!-- resto del disegno: box compressore, serbatoi, valvole, testi -->
+<svg viewBox="0 0 792 612">
+  <image href="data:image/png;base64,..." x="0" y="0" width="792" height="612" />
+
+  <path class="mask-line" d="M 74 126 L 74 474" />
+  <!-- ... una mask-line per ogni tratto di tubo ... -->
+
+  <circle cx="399" cy="154" r="42" fill="#fff" /> <!-- maschera pale evaporatore -->
+  <circle class="fan-ring" cx="399" cy="154" r="38" />
+  <g id="fan-evap" style="transform-origin: 399px 154px;"> <!-- 5 pale --> </g>
+
+  <path id="p-red-r1" class="pipe pipe-alta" d="M 74 126 L 74 474" />
+  <!-- ... resto dei tratti tubo, rossi e arancioni ... -->
 </svg>
 ```
 
@@ -167,4 +188,4 @@ Con `prefers-reduced-motion: reduce`, l'utente vede comunque lo schema tecnico c
 
 ## Demo di riferimento
 
-`assets/animazioni/demo-impianto-frigorifero.html` è una ricostruzione semplificata ma funzionante dello schema (stessa struttura: 2 eliche + tubazioni rosse/arancioni/ciano), con il codice dei punti 2–5 già applicato e commentato. Usala come base da adattare quando l'SVG definitivo (preparato secondo il punto 1) sarà pronto: gli id dei gruppi/path andranno allineati a quelli del file reale.
+`assets/animazioni/demo-impianto-frigorifero.html` usa **esattamente il disegno originale** come sfondo (renderizzato dal PDF, non ridisegnato) con overlay animato posizionato sulle coordinate reali estratte dal PDF (punto 1, Strada B): le due eliche (evaporatore e condensatore) ruotano sopra le pale originali mascherate, e 10 tratti di tubazione rossa Ø28 + 4 tratti arancioni Ø54 — tracciati sulle coordinate vere del circuito — mostrano il flusso con tratteggio animato nella direzione reale (mandata: compressore → olio → condensatore → ricevitore → valvola termostatica → evaporatore; aspirazione: evaporatore → filtro → compressore). Il codice dei punti 2–5 è applicato e commentato all'interno del file.
