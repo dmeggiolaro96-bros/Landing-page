@@ -6,26 +6,9 @@
 
 <div class="fluicom-logo-anim" id="fluicom-logo-anim">
   <svg id="logo" viewBox="0 0 951 323" xmlns="http://www.w3.org/2000/svg">
-    <circle id="lg-ring" cx="116" cy="157" r="84" fill="none" stroke="#03665a" stroke-width="16" stroke-linecap="round"/>
-    <g id="lg-strokes" transform="translate(-21.5,307.005567) scale(0.1,-0.1)" fill="#03665a" fill-opacity="0" stroke="#03665a" stroke-width="45" stroke-linejoin="round" stroke-linecap="round"><path id="lg-p0" d="M735 3061 c-6 -4 -32 -14 -60 -20 -49 -12 -135 -48 -145 -61 -3 -4
--16 -13 -30 -20 -14 -7 -32 -19 -40 -26 -46 -42 -87 -85 -105 -110 -11 -15
--30 -41 -42 -57 -13 -17 -23 -36 -23 -42 0 -6 -5 -16 -11 -22 -6 -6 -23 -44
--38 -85 l-26 -73 0 -911 c0 -683 3 -914 12 -925 6 -8 17 -35 23 -61 7 -26 18
--53 26 -59 8 -6 14 -16 14 -22 0 -45 179 -229 261 -268 106 -51 125 -58 183
--69 35 -6 230 -10 473 -10 l413 0 0 330 0 330 -32 0 c-18 1 -51 7 -73 15 -22
-8 -47 15 -55 15 -9 0 -56 20 -105 44 -107 53 -219 154 -289 259 -26 38 -46 71
--46 73 0 3 -11 30 -25 60 -14 30 -25 60 -25 67 0 7 -7 32 -16 57 -12 32 -16
-82 -16 175 -1 153 25 263 87 380 64 122 177 243 278 301 91 52 239 104 295
-104 l22 0 0 320 0 320 -438 0 c-241 0 -442 -4 -447 -9z m708 -169 c15 -2 17
--16 17 -152 0 -127 -2 -150 -15 -150 -8 0 -15 -4 -15 -9 0 -5 -17 -12 -37 -16
--51 -9 -200 -87 -216 -112 -4 -7 -13 -13 -19 -13 -34 0 -268 -255 -268 -293 0
--6 -6 -18 -13 -26 -14 -18 -46 -95 -77 -186 -47 -143 -47 -410 0 -560 36 -113
-97 -244 118 -252 6 -3 12 -10 12 -17 0 -31 169 -205 250 -258 69 -45 171 -98
-187 -98 7 0 31 -8 53 -17 l40 -18 0 -158 0 -158 -362 3 c-253 2 -369 7 -383
-15 -11 6 -45 23 -75 38 -56 26 -150 104 -150 123 0 5 -7 12 -15 16 -8 3 -15
-12 -15 19 0 8 -7 20 -14 27 -8 6 -20 28 -26 48 -7 20 -19 53 -28 72 -15 32
--17 113 -17 880 l0 845 24 65 c13 36 29 72 36 80 6 8 17 26 23 40 48 94 193
-191 318 212 65 11 574 18 667 10z"/><path id="lg-p1" d="M1710 2750 l0 -320 34 0 c18 0 51 -6 72 -13 22 -8 51 -17 67 -21 l27
+    <circle id="lg-ring" cx="118" cy="157" r="80" fill="none" stroke="#03665a" stroke-width="16" stroke-linecap="round"/>
+    <path id="lg-bracket" d="M140,10 L52,10 A42,42 0 0,0 10,52 L10,271 A42,42 0 0,0 52,313 L140,313" fill="none" stroke="#03665a" stroke-width="16" stroke-linecap="round"/>
+    <g id="lg-strokes" transform="translate(-21.5,307.005567) scale(0.1,-0.1)" fill="#03665a" fill-opacity="0" stroke="#03665a" stroke-width="45" stroke-linejoin="round" stroke-linecap="round"><path id="lg-p1" d="M1710 2750 l0 -320 34 0 c18 0 51 -6 72 -13 22 -8 51 -17 67 -21 l27
 -6 0 95 c0 76 -3 97 -15 101 -21 8 -22 286 -1 303 20 16 6808 10 6888 -7 85
 -18 156 -59 223 -127 68 -71 72 -75 104 -130 55 -94 55 -103 58 -970 2 -450
 -1 -809 -6 -820 -4 -11 -13 -47 -20 -79 -6 -33 -14 -62 -18 -65 -5 -3 -15 -22
@@ -84,13 +67,16 @@
   function initAnimations() {
     var strokes = root.querySelector('#lg-strokes');
     var ring = root.querySelector('#lg-ring');
-    var paths = ['lg-p0', 'lg-p1', 'lg-p2', 'lg-p3', 'lg-p4', 'lg-p6', 'lg-p7', 'lg-p8', 'lg-p9'].map(function (id) { return root.querySelector('#' + id); });
+    var bracket = root.querySelector('#lg-bracket');
+    var paths = ['lg-p1', 'lg-p2', 'lg-p3', 'lg-p4', 'lg-p6', 'lg-p7', 'lg-p8', 'lg-p9'].map(function (id) { return root.querySelector('#' + id); });
     var svg = root.querySelector('svg');
 
     function prep() {
-      var ringLen = ring.getTotalLength();
-      ring.style.strokeDasharray = ringLen;
-      ring.style.strokeDashoffset = ringLen;
+      [ring, bracket].forEach(function (el) {
+        var len = el.getTotalLength();
+        el.style.strokeDasharray = len;
+        el.style.strokeDashoffset = len;
+      });
       paths.forEach(function (el) {
         var len = el.getTotalLength();
         el.style.strokeDasharray = len;
@@ -101,11 +87,9 @@
 
     function play() {
       prep();
-      var bracket = root.querySelector('#lg-p0');
-      var rest = paths.filter(function (el) { return el.id !== 'lg-p0'; });
       var tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
       tl.to([ring, bracket], { strokeDashoffset: 0, duration: 0.7, ease: 'power1.inOut' }, 0)
-        .to(rest, { strokeDashoffset: 0, duration: 1.3, ease: 'power1.inOut', stagger: 0.09 }, 0.7)
+        .to(paths, { strokeDashoffset: 0, duration: 1.3, ease: 'power1.inOut', stagger: 0.09 }, 0.7)
         .to(strokes, { fillOpacity: 1, duration: 0.5, ease: 'power2.out' }, '>-0.2');
     }
 
@@ -116,7 +100,7 @@
         if (ctx.conditions.full) {
           play();
         } else {
-          gsap.set(ring, { strokeDashoffset: 0 });
+          gsap.set([ring, bracket], { strokeDashoffset: 0 });
           gsap.set(paths, { strokeDashoffset: 0 });
           gsap.set(strokes, { fillOpacity: 1 });
         }
